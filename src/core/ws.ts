@@ -126,7 +126,7 @@ export class WebSocketService {
 	}
 
 	private heartbeatSubscribe() {
-		const heartbeatSubscrition = interval(this.config.timeout).subscribe(() =>
+		const heartbeatSubscrition = interval(this.config.heartbeatTime).subscribe(() =>
 			this.publish(EnumPublishDestination.HEARTBEAT, Date.now().toString()).subscribe({
 				complete: () => {},
 				error: e => {
