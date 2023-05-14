@@ -1,0 +1,4 @@
+node_modules
+src
+pnpm-locl.yaml
+vite.config.ts
