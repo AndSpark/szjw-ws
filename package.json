@@ -1,6 +1,6 @@
 {
 	"name": "szjw-ws",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "",
 	"main": "dist/szjw-ws.js",
 	"module": "dist/szjw-ws.mjs",
@@ -12,7 +12,8 @@
 		}
 	},
 	"scripts": {
-		"build": "vite build"
+		"build": "vite build",
+		"p": "pnpm build && yarn publish"
 	},
 	"keywords": [],
 	"author": "",

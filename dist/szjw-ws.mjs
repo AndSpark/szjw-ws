@@ -1,6 +1,6 @@
 var W = Object.defineProperty;
 var V = (i, e, t) => e in i ? W(i, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : i[e] = t;
-var _ = (i, e, t) => (V(i, typeof e != "symbol" ? e + "" : e, t), t);
+var m = (i, e, t) => (V(i, typeof e != "symbol" ? e + "" : e, t), t);
 var f = (i, e, t) => new Promise((s, n) => {
   var o = (a) => {
     try {
@@ -252,10 +252,10 @@ var p;
 (function(i) {
   i[i.CONNECTING = 0] = "CONNECTING", i[i.OPEN = 1] = "OPEN", i[i.CLOSING = 2] = "CLOSING", i[i.CLOSED = 3] = "CLOSED";
 })(p = p || (p = {}));
-var m;
+var _;
 (function(i) {
   i[i.ACTIVE = 0] = "ACTIVE", i[i.DEACTIVATING = 1] = "DEACTIVATING", i[i.INACTIVE = 2] = "INACTIVE";
-})(m = m || (m = {}));
+})(_ = _ || (_ = {}));
 class l {
   /**
    * Takes an array of versions, typical elements '1.2', '1.1', or '1.0'
@@ -502,7 +502,7 @@ class J {
    * Create an instance.
    */
   constructor(e = {}) {
-    this.stompVersions = l.default, this.connectionTimeout = 0, this.reconnectDelay = 5e3, this.heartbeatIncoming = 1e4, this.heartbeatOutgoing = 1e4, this.splitLargeFrames = !1, this.maxWebSocketChunkSize = 8 * 1024, this.forceBinaryWSFrames = !1, this.appendMissingNULLonIncoming = !1, this.discardWebsocketOnCommFailure = !1, this.state = m.INACTIVE;
+    this.stompVersions = l.default, this.connectionTimeout = 0, this.reconnectDelay = 5e3, this.heartbeatIncoming = 1e4, this.heartbeatOutgoing = 1e4, this.splitLargeFrames = !1, this.maxWebSocketChunkSize = 8 * 1024, this.forceBinaryWSFrames = !1, this.appendMissingNULLonIncoming = !1, this.discardWebsocketOnCommFailure = !1, this.state = _.INACTIVE;
     const t = () => {
     };
     this.debug = t, this.beforeConnect = t, this.onConnect = t, this.onDisconnect = t, this.onUnhandledMessage = t, this.onUnhandledReceipt = t, this.onUnhandledFrame = t, this.onStompError = t, this.onWebSocketClose = t, this.onWebSocketError = t, this.logRawCommunication = !1, this.onChangeState = t, this.connectHeaders = {}, this._disconnectHeaders = {}, this.configure(e);
@@ -539,7 +539,7 @@ class J {
    * if the client is active (connected or going to reconnect)
    */
   get active() {
-    return this.state === m.ACTIVE;
+    return this.state === _.ACTIVE;
   }
   _changeState(e) {
     this.state = e, this.onChangeState(e);
@@ -563,9 +563,9 @@ class J {
         this.debug("Already ACTIVE, ignoring request to activate");
         return;
       }
-      this._changeState(m.ACTIVE), this._connect();
+      this._changeState(_.ACTIVE), this._connect();
     };
-    this.state === m.DEACTIVATING ? (this.debug("Waiting for deactivation to finish before activating"), this.deactivate().then(() => {
+    this.state === _.DEACTIVATING ? (this.debug("Waiting for deactivation to finish before activating"), this.deactivate().then(() => {
       e();
     })) : e();
   }
@@ -610,7 +610,7 @@ class J {
           this.onStompError(t);
         },
         onWebSocketClose: (t) => {
-          this._stompHandler = void 0, this.state === m.DEACTIVATING && this._changeState(m.INACTIVE), this.onWebSocketClose(t), this.active && this._schedule_reconnect();
+          this._stompHandler = void 0, this.state === _.DEACTIVATING && this._changeState(_.INACTIVE), this.onWebSocketClose(t), this.active && this._schedule_reconnect();
         },
         onWebSocketError: (t) => {
           this.onWebSocketError(t);
@@ -670,9 +670,9 @@ class J {
       var o;
       const t = e.force || !1, s = this.active;
       let n;
-      if (this.state === m.INACTIVE)
+      if (this.state === _.INACTIVE)
         return this.debug("Already INACTIVE, nothing more to do"), Promise.resolve();
-      if (this._changeState(m.DEACTIVATING), this._reconnector && (clearTimeout(this._reconnector), this._reconnector = void 0), this._stompHandler && // @ts-ignore - if there is a _stompHandler, there is the webSocket
+      if (this._changeState(_.DEACTIVATING), this._reconnector && (clearTimeout(this._reconnector), this._reconnector = void 0), this._stompHandler && // @ts-ignore - if there is a _stompHandler, there is the webSocket
       this.webSocket.readyState !== p.CLOSED) {
         const c = this._stompHandler.onWebSocketClose;
         n = new Promise((r, a) => {
@@ -681,7 +681,7 @@ class J {
           };
         });
       } else
-        return this._changeState(m.INACTIVE), Promise.resolve();
+        return this._changeState(_.INACTIVE), Promise.resolve();
       return t ? (o = this._stompHandler) == null || o.discardWebsocket() : s && this._disposeStompHandler(), n;
     });
   }
@@ -1203,20 +1203,21 @@ const N = {
 };
 class ie {
   constructor() {
-    _(this, "timeout", 5e3);
-    _(this, "reconnectDelay", 5e3);
-    _(this, "baseUrl", `${location.protocol.startsWith("https") ? "wss" : "ws"}://${location.host}`);
-    _(this, "url", "/api/auth/ws/endpoint");
+    m(this, "timeout", 5e3);
+    m(this, "reconnectDelay", 5e3);
+    m(this, "heartbeatTime", 15e3);
+    m(this, "baseUrl", `${location.protocol.startsWith("https") ? "wss" : "ws"}://${location.host}`);
+    m(this, "url", "/api/auth/ws/endpoint");
   }
 }
 class oe {
   constructor() {
-    _(this, "rxStomp", new Y());
-    _(this, "config", new ie());
-    _(this, "topicHandlers", {});
-    _(this, "topicSubscrition", {});
-    _(this, "disconnect$", new S());
-    _(this, "connectionState$", new S());
+    m(this, "rxStomp", new Y());
+    m(this, "config", new ie());
+    m(this, "topicHandlers", {});
+    m(this, "topicSubscrition", {});
+    m(this, "disconnect$", new S());
+    m(this, "connectionState$", new S());
   }
   init(e) {
     for (const t in e)
@@ -1293,7 +1294,7 @@ class oe {
     });
   }
   heartbeatSubscribe() {
-    const e = R(this.config.timeout).subscribe(
+    const e = R(this.config.heartbeatTime).subscribe(
       () => this.publish($.HEARTBEAT, Date.now().toString()).subscribe({
         complete: () => {
         },
