@@ -30,7 +30,6 @@ export class WebSocketService {
 	disconnect() {
 		this.rxStomp.deactivate()
 		this.disconnect$.next(true)
-		this.disconnect$.unsubscribe()
 		this.unsubscribeAll()
 	}
 

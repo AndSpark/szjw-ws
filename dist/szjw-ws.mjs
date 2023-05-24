@@ -1,41 +1,41 @@
 var W = Object.defineProperty;
-var V = (i, e, t) => e in i ? W(i, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : i[e] = t;
-var m = (i, e, t) => (V(i, typeof e != "symbol" ? e + "" : e, t), t);
-var f = (i, e, t) => new Promise((s, n) => {
+var B = (n, e, t) => e in n ? W(n, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : n[e] = t;
+var _ = (n, e, t) => (B(n, typeof e != "symbol" ? e + "" : e, t), t);
+var y = (n, e, t) => new Promise((s, i) => {
   var o = (a) => {
     try {
       r(t.next(a));
     } catch (d) {
-      n(d);
+      i(d);
     }
   }, c = (a) => {
     try {
       r(t.throw(a));
     } catch (d) {
-      n(d);
+      i(d);
     }
   }, r = (a) => a.done ? s(a.value) : Promise.resolve(a.value).then(o, c);
-  r((t = t.apply(i, e)).next());
+  r((t = t.apply(n, e)).next());
 });
-import { BehaviorSubject as H, filter as k, Subject as S, Observable as U, take as D, share as L, firstValueFrom as A, from as x, timeout as F, interval as R } from "rxjs";
-import { onUnmounted as M } from "vue";
-import { createDecorator as P, getProtoMetadata as j, injectService as G } from "vue3-oop";
-const C = {
+import { BehaviorSubject as H, filter as k, Subject as C, Observable as L, take as U, share as V, firstValueFrom as A, from as R, timeout as x, interval as F } from "rxjs";
+import { onUnmounted as P } from "vue";
+import { createDecorator as M, getProtoMetadata as G, injectService as j } from "vue3-oop";
+const f = {
   // LINEFEED byte (octet 10)
   LF: `
 `,
   // NULL byte (octet 0)
   NULL: "\0"
 };
-class y {
+class S {
   /**
    * Frame constructor. `command`, `headers` and `body` are available as properties.
    *
    * @internal
    */
   constructor(e) {
-    const { command: t, headers: s, body: n, binaryBody: o, escapeHeaderValues: c, skipContentLengthHeader: r } = e;
-    this.command = t, this.headers = Object.assign({}, s || {}), o ? (this._binaryBody = o, this.isBinaryBody = !0) : (this._body = n || "", this.isBinaryBody = !1), this.escapeHeaderValues = c || !1, this.skipContentLengthHeader = r || !1;
+    const { command: t, headers: s, body: i, binaryBody: o, escapeHeaderValues: c, skipContentLengthHeader: r } = e;
+    this.command = t, this.headers = Object.assign({}, s || {}), o ? (this._binaryBody = o, this.isBinaryBody = !0) : (this._body = i || "", this.isBinaryBody = !1), this.escapeHeaderValues = c || !1, this.skipContentLengthHeader = r || !1;
   }
   /**
    * body of the frame
@@ -55,14 +55,14 @@ class y {
    * @internal
    */
   static fromRawFrame(e, t) {
-    const s = {}, n = (o) => o.replace(/^\s+|\s+$/g, "");
+    const s = {}, i = (o) => o.replace(/^\s+|\s+$/g, "");
     for (const o of e.headers.reverse()) {
       o.indexOf(":");
-      const c = n(o[0]);
-      let r = n(o[1]);
-      t && e.command !== "CONNECT" && e.command !== "CONNECTED" && (r = y.hdrValueUnEscape(r)), s[c] = r;
+      const c = i(o[0]);
+      let r = i(o[1]);
+      t && e.command !== "CONNECT" && e.command !== "CONNECTED" && (r = S.hdrValueUnEscape(r)), s[c] = r;
     }
-    return new y({
+    return new S({
       command: e.command,
       headers: s,
       binaryBody: e.binaryBody,
@@ -84,16 +84,16 @@ class y {
    */
   serialize() {
     const e = this.serializeCmdAndHeaders();
-    return this.isBinaryBody ? y.toUnit8Array(e, this._binaryBody).buffer : e + this._body + C.NULL;
+    return this.isBinaryBody ? S.toUnit8Array(e, this._binaryBody).buffer : e + this._body + f.NULL;
   }
   serializeCmdAndHeaders() {
     const e = [this.command];
     this.skipContentLengthHeader && delete this.headers["content-length"];
     for (const t of Object.keys(this.headers || {})) {
       const s = this.headers[t];
-      this.escapeHeaderValues && this.command !== "CONNECT" && this.command !== "CONNECTED" ? e.push(`${t}:${y.hdrValueEscape(`${s}`)}`) : e.push(`${t}:${s}`);
+      this.escapeHeaderValues && this.command !== "CONNECT" && this.command !== "CONNECTED" ? e.push(`${t}:${S.hdrValueEscape(`${s}`)}`) : e.push(`${t}:${s}`);
     }
-    return (this.isBinaryBody || !this.isBodyEmpty() && !this.skipContentLengthHeader) && e.push(`content-length:${this.bodyLength()}`), e.join(C.LF) + C.LF + C.LF;
+    return (this.isBinaryBody || !this.isBodyEmpty() && !this.skipContentLengthHeader) && e.push(`content-length:${this.bodyLength()}`), e.join(f.LF) + f.LF + f.LF;
   }
   isBodyEmpty() {
     return this.bodyLength() === 0;
@@ -110,8 +110,8 @@ class y {
     return e ? new TextEncoder().encode(e).length : 0;
   }
   static toUnit8Array(e, t) {
-    const s = new TextEncoder().encode(e), n = new Uint8Array([0]), o = new Uint8Array(s.length + t.length + n.length);
-    return o.set(s), o.set(t, s.length), o.set(n, s.length + t.length), o;
+    const s = new TextEncoder().encode(e), i = new Uint8Array([0]), o = new Uint8Array(s.length + t.length + i.length);
+    return o.set(s), o.set(t, s.length), o.set(i, s.length + t.length), o;
   }
   /**
    * Serialize a STOMP frame as per STOMP standards, suitable to be sent to the STOMP broker.
@@ -119,7 +119,7 @@ class y {
    * @internal
    */
   static marshall(e) {
-    return new y(e).serialize();
+    return new S(e).serialize();
   }
   /**
    *  Escape header values
@@ -135,27 +135,27 @@ class y {
 `).replace(/\\c/g, ":").replace(/\\\\/g, "\\");
   }
 }
-const v = 0, w = 10, E = 13, z = 58;
-class q {
+const v = 0, E = 10, w = 13, z = 58;
+class K {
   constructor(e, t) {
     this.onFrame = e, this.onIncomingPing = t, this._encoder = new TextEncoder(), this._decoder = new TextDecoder(), this._token = [], this._initState();
   }
   parseChunk(e, t = !1) {
     let s;
     if (typeof e == "string" ? s = this._encoder.encode(e) : s = new Uint8Array(e), t && s[s.length - 1] !== 0) {
-      const n = new Uint8Array(s.length + 1);
-      n.set(s, 0), n[s.length] = 0, s = n;
+      const i = new Uint8Array(s.length + 1);
+      i.set(s, 0), i[s.length] = 0, s = i;
     }
-    for (let n = 0; n < s.length; n++) {
-      const o = s[n];
+    for (let i = 0; i < s.length; i++) {
+      const o = s[i];
       this._onByte(o);
     }
   }
   // The following implements a simple Rec Descent Parser.
   // The grammar is simple and just one byte tells what should be the next state
   _collectFrame(e) {
-    if (e !== v && e !== E) {
-      if (e === w) {
+    if (e !== v && e !== w) {
+      if (e === E) {
         this.onIncomingPing();
         return;
       }
@@ -163,8 +163,8 @@ class q {
     }
   }
   _collectCommand(e) {
-    if (e !== E) {
-      if (e === w) {
+    if (e !== w) {
+      if (e === E) {
         this._results.command = this._consumeTokenAsUTF8(), this._onByte = this._collectHeaders;
         return;
       }
@@ -172,8 +172,8 @@ class q {
     }
   }
   _collectHeaders(e) {
-    if (e !== E) {
-      if (e === w) {
+    if (e !== w) {
+      if (e === E) {
         this._setupCollectBody();
         return;
       }
@@ -191,8 +191,8 @@ class q {
     this._consumeByte(e);
   }
   _collectHeaderValue(e) {
-    if (e !== E) {
-      if (e === w) {
+    if (e !== w) {
+      if (e === E) {
         this._results.headers.push([
           this._headerKey,
           this._consumeTokenAsUTF8()
@@ -249,13 +249,13 @@ class q {
   }
 }
 var p;
-(function(i) {
-  i[i.CONNECTING = 0] = "CONNECTING", i[i.OPEN = 1] = "OPEN", i[i.CLOSING = 2] = "CLOSING", i[i.CLOSED = 3] = "CLOSED";
+(function(n) {
+  n[n.CONNECTING = 0] = "CONNECTING", n[n.OPEN = 1] = "OPEN", n[n.CLOSING = 2] = "CLOSING", n[n.CLOSED = 3] = "CLOSED";
 })(p = p || (p = {}));
-var _;
-(function(i) {
-  i[i.ACTIVE = 0] = "ACTIVE", i[i.DEACTIVATING = 1] = "DEACTIVATING", i[i.INACTIVE = 2] = "INACTIVE";
-})(_ = _ || (_ = {}));
+var m;
+(function(n) {
+  n[n.ACTIVE = 0] = "ACTIVE", n[n.DEACTIVATING = 1] = "DEACTIVATING", n[n.INACTIVE = 2] = "INACTIVE";
+})(m = m || (m = {}));
 class l {
   /**
    * Takes an array of versions, typical elements '1.2', '1.1', or '1.0'
@@ -287,18 +287,18 @@ l.default = new l([
   l.V1_1,
   l.V1_0
 ]);
-function K(i, e) {
-  i.terminate = function() {
+function q(n, e) {
+  n.terminate = function() {
     const t = () => {
     };
     this.onerror = t, this.onmessage = t, this.onopen = t;
-    const s = /* @__PURE__ */ new Date(), n = Math.random().toString().substring(2, 8), o = this.onclose;
+    const s = /* @__PURE__ */ new Date(), i = Math.random().toString().substring(2, 8), o = this.onclose;
     this.onclose = (c) => {
       const r = (/* @__PURE__ */ new Date()).getTime() - s.getTime();
-      e(`Discarded socket (#${n})  closed after ${r}ms, with code/reason: ${c.code}/${c.reason}`);
-    }, this.close(), o == null || o.call(i, {
+      e(`Discarded socket (#${i})  closed after ${r}ms, with code/reason: ${c.code}/${c.reason}`);
+    }, this.close(), o == null || o.call(n, {
       code: 4001,
-      reason: `Quick discarding socket (#${n}) without waiting for the shutdown sequence.`,
+      reason: `Quick discarding socket (#${i}) without waiting for the shutdown sequence.`,
       wasClean: !1
     });
   };
@@ -307,22 +307,22 @@ class Q {
   constructor(e, t, s) {
     this._client = e, this._webSocket = t, this._connected = !1, this._serverFrameHandlers = {
       // [CONNECTED Frame](https://stomp.github.com/stomp-specification-1.2.html#CONNECTED_Frame)
-      CONNECTED: (n) => {
-        this.debug(`connected to server ${n.headers.server}`), this._connected = !0, this._connectedVersion = n.headers.version, this._connectedVersion === l.V1_2 && (this._escapeHeaderValues = !0), this._setupHeartbeat(n.headers), this.onConnect(n);
+      CONNECTED: (i) => {
+        this.debug(`connected to server ${i.headers.server}`), this._connected = !0, this._connectedVersion = i.headers.version, this._connectedVersion === l.V1_2 && (this._escapeHeaderValues = !0), this._setupHeartbeat(i.headers), this.onConnect(i);
       },
       // [MESSAGE Frame](https://stomp.github.com/stomp-specification-1.2.html#MESSAGE)
-      MESSAGE: (n) => {
-        const o = n.headers.subscription, c = this._subscriptions[o] || this.onUnhandledMessage, r = n, a = this, d = this._connectedVersion === l.V1_2 ? r.headers.ack : r.headers["message-id"];
+      MESSAGE: (i) => {
+        const o = i.headers.subscription, c = this._subscriptions[o] || this.onUnhandledMessage, r = i, a = this, d = this._connectedVersion === l.V1_2 ? r.headers.ack : r.headers["message-id"];
         r.ack = (g = {}) => a.ack(d, o, g), r.nack = (g = {}) => a.nack(d, o, g), c(r);
       },
       // [RECEIPT Frame](https://stomp.github.com/stomp-specification-1.2.html#RECEIPT)
-      RECEIPT: (n) => {
-        const o = this._receiptWatchers[n.headers["receipt-id"]];
-        o ? (o(n), delete this._receiptWatchers[n.headers["receipt-id"]]) : this.onUnhandledReceipt(n);
+      RECEIPT: (i) => {
+        const o = this._receiptWatchers[i.headers["receipt-id"]];
+        o ? (o(i), delete this._receiptWatchers[i.headers["receipt-id"]]) : this.onUnhandledReceipt(i);
       },
       // [ERROR Frame](https://stomp.github.com/stomp-specification-1.2.html#ERROR)
-      ERROR: (n) => {
-        this.onStompError(n);
+      ERROR: (i) => {
+        this.onStompError(i);
       }
     }, this._counter = 0, this._subscriptions = {}, this._receiptWatchers = {}, this._partialData = "", this._escapeHeaderValues = !1, this._lastServerActivityTS = Date.now(), this.debug = s.debug, this.stompVersions = s.stompVersions, this.connectHeaders = s.connectHeaders, this.disconnectHeaders = s.disconnectHeaders, this.heartbeatIncoming = s.heartbeatIncoming, this.heartbeatOutgoing = s.heartbeatOutgoing, this.splitLargeFrames = s.splitLargeFrames, this.maxWebSocketChunkSize = s.maxWebSocketChunkSize, this.forceBinaryWSFrames = s.forceBinaryWSFrames, this.logRawCommunication = s.logRawCommunication, this.appendMissingNULLonIncoming = s.appendMissingNULLonIncoming, this.discardWebsocketOnCommFailure = s.discardWebsocketOnCommFailure, this.onConnect = s.onConnect, this.onDisconnect = s.onDisconnect, this.onStompError = s.onStompError, this.onWebSocketClose = s.onWebSocketClose, this.onWebSocketError = s.onWebSocketError, this.onUnhandledMessage = s.onUnhandledMessage, this.onUnhandledReceipt = s.onUnhandledReceipt, this.onUnhandledFrame = s.onUnhandledFrame;
   }
@@ -333,10 +333,10 @@ class Q {
     return this._connected;
   }
   start() {
-    const e = new q(
+    const e = new K(
       // On Frame
       (t) => {
-        const s = y.fromRawFrame(t, this._escapeHeaderValues);
+        const s = S.fromRawFrame(t, this._escapeHeaderValues);
         this.logRawCommunication || this.debug(`<<< ${s}`), (this._serverFrameHandlers[s.command] || this.onUnhandledFrame)(s);
       },
       // On Incoming Ping
@@ -365,19 +365,19 @@ class Q {
   _setupHeartbeat(e) {
     if (e.version !== l.V1_1 && e.version !== l.V1_2 || !e["heart-beat"])
       return;
-    const [t, s] = e["heart-beat"].split(",").map((n) => parseInt(n, 10));
+    const [t, s] = e["heart-beat"].split(",").map((i) => parseInt(i, 10));
     if (this.heartbeatOutgoing !== 0 && s !== 0) {
-      const n = Math.max(this.heartbeatOutgoing, s);
-      this.debug(`send PING every ${n}ms`), this._pinger = setInterval(() => {
-        this._webSocket.readyState === p.OPEN && (this._webSocket.send(C.LF), this.debug(">>> PING"));
-      }, n);
+      const i = Math.max(this.heartbeatOutgoing, s);
+      this.debug(`send PING every ${i}ms`), this._pinger = setInterval(() => {
+        this._webSocket.readyState === p.OPEN && (this._webSocket.send(f.LF), this.debug(">>> PING"));
+      }, i);
     }
     if (this.heartbeatIncoming !== 0 && t !== 0) {
-      const n = Math.max(this.heartbeatIncoming, t);
-      this.debug(`check PONG every ${n}ms`), this._ponger = setInterval(() => {
+      const i = Math.max(this.heartbeatIncoming, t);
+      this.debug(`check PONG every ${i}ms`), this._ponger = setInterval(() => {
         const o = Date.now() - this._lastServerActivityTS;
-        o > n * 2 && (this.debug(`did not receive server activity for the last ${o}ms`), this._closeOrDiscardWebsocket());
-      }, n);
+        o > i * 2 && (this.debug(`did not receive server activity for the last ${o}ms`), this._closeOrDiscardWebsocket());
+      }, i);
     }
   }
   _closeOrDiscardWebsocket() {
@@ -391,13 +391,13 @@ class Q {
     }, this._webSocket.close();
   }
   discardWebsocket() {
-    typeof this._webSocket.terminate != "function" && K(this._webSocket, (e) => this.debug(e)), this._webSocket.terminate();
+    typeof this._webSocket.terminate != "function" && q(this._webSocket, (e) => this.debug(e)), this._webSocket.terminate();
   }
   _transmit(e) {
-    const { command: t, headers: s, body: n, binaryBody: o, skipContentLengthHeader: c } = e, r = new y({
+    const { command: t, headers: s, body: i, binaryBody: o, skipContentLengthHeader: c } = e, r = new S({
       command: t,
       headers: s,
-      body: n,
+      body: i,
       binaryBody: o,
       escapeHeaderValues: this._escapeHeaderValues,
       skipContentLengthHeader: c
@@ -430,11 +430,11 @@ class Q {
     this._connected = !1, this._pinger && (clearInterval(this._pinger), this._pinger = void 0), this._ponger && (clearInterval(this._ponger), this._ponger = void 0);
   }
   publish(e) {
-    const { destination: t, headers: s, body: n, binaryBody: o, skipContentLengthHeader: c } = e, r = Object.assign({ destination: t }, s);
+    const { destination: t, headers: s, body: i, binaryBody: o, skipContentLengthHeader: c } = e, r = Object.assign({ destination: t }, s);
     this._transmit({
       command: "SEND",
       headers: r,
-      body: n,
+      body: i,
       binaryBody: o,
       skipContentLengthHeader: c
     });
@@ -444,11 +444,11 @@ class Q {
   }
   subscribe(e, t, s = {}) {
     s = Object.assign({}, s), s.id || (s.id = `sub-${this._counter++}`), s.destination = e, this._subscriptions[s.id] = t, this._transmit({ command: "SUBSCRIBE", headers: s });
-    const n = this;
+    const i = this;
     return {
       id: s.id,
       unsubscribe(o) {
-        return n.unsubscribe(s.id, o);
+        return i.unsubscribe(s.id, o);
       }
     };
   }
@@ -497,12 +497,12 @@ class Q {
     return s = Object.assign({}, s), this._connectedVersion === l.V1_2 ? s.id = e : s["message-id"] = e, s.subscription = t, this._transmit({ command: "NACK", headers: s });
   }
 }
-class J {
+class Y {
   /**
    * Create an instance.
    */
   constructor(e = {}) {
-    this.stompVersions = l.default, this.connectionTimeout = 0, this.reconnectDelay = 5e3, this.heartbeatIncoming = 1e4, this.heartbeatOutgoing = 1e4, this.splitLargeFrames = !1, this.maxWebSocketChunkSize = 8 * 1024, this.forceBinaryWSFrames = !1, this.appendMissingNULLonIncoming = !1, this.discardWebsocketOnCommFailure = !1, this.state = _.INACTIVE;
+    this.stompVersions = l.default, this.connectionTimeout = 0, this.reconnectDelay = 5e3, this.heartbeatIncoming = 1e4, this.heartbeatOutgoing = 1e4, this.splitLargeFrames = !1, this.maxWebSocketChunkSize = 8 * 1024, this.forceBinaryWSFrames = !1, this.appendMissingNULLonIncoming = !1, this.discardWebsocketOnCommFailure = !1, this.state = m.INACTIVE;
     const t = () => {
     };
     this.debug = t, this.beforeConnect = t, this.onConnect = t, this.onDisconnect = t, this.onUnhandledMessage = t, this.onUnhandledReceipt = t, this.onUnhandledFrame = t, this.onStompError = t, this.onWebSocketClose = t, this.onWebSocketError = t, this.logRawCommunication = !1, this.onChangeState = t, this.connectHeaders = {}, this._disconnectHeaders = {}, this.configure(e);
@@ -539,7 +539,7 @@ class J {
    * if the client is active (connected or going to reconnect)
    */
   get active() {
-    return this.state === _.ACTIVE;
+    return this.state === m.ACTIVE;
   }
   _changeState(e) {
     this.state = e, this.onChangeState(e);
@@ -563,14 +563,14 @@ class J {
         this.debug("Already ACTIVE, ignoring request to activate");
         return;
       }
-      this._changeState(_.ACTIVE), this._connect();
+      this._changeState(m.ACTIVE), this._connect();
     };
-    this.state === _.DEACTIVATING ? (this.debug("Waiting for deactivation to finish before activating"), this.deactivate().then(() => {
+    this.state === m.DEACTIVATING ? (this.debug("Waiting for deactivation to finish before activating"), this.deactivate().then(() => {
       e();
     })) : e();
   }
   _connect() {
-    return f(this, null, function* () {
+    return y(this, null, function* () {
       if (yield this.beforeConnect(), this._stompHandler) {
         this.debug("There is already a stompHandler, skipping the call to connect");
         return;
@@ -610,7 +610,7 @@ class J {
           this.onStompError(t);
         },
         onWebSocketClose: (t) => {
-          this._stompHandler = void 0, this.state === _.DEACTIVATING && this._changeState(_.INACTIVE), this.onWebSocketClose(t), this.active && this._schedule_reconnect();
+          this._stompHandler = void 0, this.state === m.DEACTIVATING && this._changeState(m.INACTIVE), this.onWebSocketClose(t), this.active && this._schedule_reconnect();
         },
         onWebSocketError: (t) => {
           this.onWebSocketError(t);
@@ -666,23 +666,23 @@ class J {
    * and subsequently, say after a wait, with the `force` option.
    */
   deactivate() {
-    return f(this, arguments, function* (e = {}) {
+    return y(this, arguments, function* (e = {}) {
       var o;
       const t = e.force || !1, s = this.active;
-      let n;
-      if (this.state === _.INACTIVE)
+      let i;
+      if (this.state === m.INACTIVE)
         return this.debug("Already INACTIVE, nothing more to do"), Promise.resolve();
-      if (this._changeState(_.DEACTIVATING), this._reconnector && (clearTimeout(this._reconnector), this._reconnector = void 0), this._stompHandler && // @ts-ignore - if there is a _stompHandler, there is the webSocket
+      if (this._changeState(m.DEACTIVATING), this._reconnector && (clearTimeout(this._reconnector), this._reconnector = void 0), this._stompHandler && // @ts-ignore - if there is a _stompHandler, there is the webSocket
       this.webSocket.readyState !== p.CLOSED) {
         const c = this._stompHandler.onWebSocketClose;
-        n = new Promise((r, a) => {
+        i = new Promise((r, a) => {
           this._stompHandler.onWebSocketClose = (d) => {
             c(d), r();
           };
         });
       } else
-        return this._changeState(_.INACTIVE), Promise.resolve();
-      return t ? (o = this._stompHandler) == null || o.discardWebsocket() : s && this._disposeStompHandler(), n;
+        return this._changeState(m.INACTIVE), Promise.resolve();
+      return t ? (o = this._stompHandler) == null || o.discardWebsocket() : s && this._disposeStompHandler(), i;
     });
   }
   /**
@@ -892,10 +892,10 @@ class J {
   }
 }
 var h;
-(function(i) {
-  i[i.CONNECTING = 0] = "CONNECTING", i[i.OPEN = 1] = "OPEN", i[i.CLOSING = 2] = "CLOSING", i[i.CLOSED = 3] = "CLOSED";
+(function(n) {
+  n[n.CONNECTING = 0] = "CONNECTING", n[n.OPEN = 1] = "OPEN", n[n.CLOSING = 2] = "CLOSING", n[n.CLOSED = 3] = "CLOSED";
 })(h = h || (h = {}));
-class Y {
+class J {
   /**
    * Instance of actual
    * [@stomp/stompjs]{@link https://github.com/stomp-js/stompjs}
@@ -916,14 +916,14 @@ class Y {
    */
   constructor(e) {
     this._queuedMessages = [];
-    const t = e || new J();
+    const t = e || new Y();
     this._stompClient = t;
     const s = () => {
     };
     this._beforeConnect = s, this._correlateErrors = () => {
-    }, this._debug = s, this._connectionStatePre$ = new H(h.CLOSED), this._connectedPre$ = this._connectionStatePre$.pipe(k((n) => n === h.OPEN)), this.connectionState$ = new H(h.CLOSED), this.connected$ = this.connectionState$.pipe(k((n) => n === h.OPEN)), this.connected$.subscribe(() => {
+    }, this._debug = s, this._connectionStatePre$ = new H(h.CLOSED), this._connectedPre$ = this._connectionStatePre$.pipe(k((i) => i === h.OPEN)), this.connectionState$ = new H(h.CLOSED), this.connected$ = this.connectionState$.pipe(k((i) => i === h.OPEN)), this.connected$.subscribe(() => {
       this._sendQueuedMessages();
-    }), this._serverHeadersBehaviourSubject$ = new H(null), this.serverHeaders$ = this._serverHeadersBehaviourSubject$.pipe(k((n) => n !== null)), this.stompErrors$ = new S(), this.unhandledMessage$ = new S(), this.unhandledReceipts$ = new S(), this.unhandledFrame$ = new S(), this.webSocketErrors$ = new S();
+    }), this._serverHeadersBehaviourSubject$ = new H(null), this.serverHeaders$ = this._serverHeadersBehaviourSubject$.pipe(k((i) => i !== null)), this.stompErrors$ = new C(), this.unhandledMessage$ = new C(), this.unhandledReceipts$ = new C(), this.unhandledFrame$ = new C(), this.webSocketErrors$ = new C();
   }
   /**
    * Set configuration. This method may be called multiple times.
@@ -966,7 +966,7 @@ class Y {
    */
   activate() {
     this._stompClient.configure({
-      beforeConnect: () => f(this, null, function* () {
+      beforeConnect: () => y(this, null, function* () {
         this._changeState(h.CONNECTING), yield this._beforeConnect(this);
       }),
       onConnect: (e) => {
@@ -1007,7 +1007,7 @@ class Y {
    * Maps to: [Client#deactivate]{@link Client#deactivate}
    */
   deactivate() {
-    return f(this, arguments, function* (e = {}) {
+    return y(this, arguments, function* (e = {}) {
       this._changeState(h.CLOSING), yield this._stompClient.deactivate(e), this._changeState(h.CLOSED);
     });
   }
@@ -1096,31 +1096,31 @@ class Y {
       unsubHeaders: {},
       subscribeOnlyOnce: !1
     };
-    let n;
-    return typeof e == "string" ? n = Object.assign({}, s, {
+    let i;
+    return typeof e == "string" ? i = Object.assign({}, s, {
       destination: e,
       subHeaders: t
-    }) : n = Object.assign({}, s, e), this._debug(`Request to subscribe ${n.destination}`), U.create((c) => {
+    }) : i = Object.assign({}, s, e), this._debug(`Request to subscribe ${i.destination}`), L.create((c) => {
       let r, a, d = this._connectedPre$;
-      n.subscribeOnlyOnce && (d = d.pipe(D(1)));
+      i.subscribeOnlyOnce && (d = d.pipe(U(1)));
       const g = this.stompErrors$.subscribe((b) => {
-        this._correlateErrors(b) === n.destination && c.error(b);
+        this._correlateErrors(b) === i.destination && c.error(b);
       });
       return a = d.subscribe(() => {
-        this._debug(`Will subscribe to ${n.destination}`);
-        let b = n.subHeaders;
-        typeof b == "function" && (b = b()), r = this._stompClient.subscribe(n.destination, (I) => {
+        this._debug(`Will subscribe to ${i.destination}`);
+        let b = i.subHeaders;
+        typeof b == "function" && (b = b()), r = this._stompClient.subscribe(i.destination, (I) => {
           c.next(I);
         }, b);
       }), () => {
-        if (this._debug(`Stop watching connection state (for ${n.destination})`), a.unsubscribe(), g.unsubscribe(), this.connected()) {
-          this._debug(`Will unsubscribe from ${n.destination} at Stomp`);
-          let b = n.unsubHeaders;
+        if (this._debug(`Stop watching connection state (for ${i.destination})`), a.unsubscribe(), g.unsubscribe(), this.connected()) {
+          this._debug(`Will unsubscribe from ${i.destination} at Stomp`);
+          let b = i.unsubHeaders;
           typeof b == "function" && (b = b()), r.unsubscribe(b);
         } else
-          this._debug(`Stomp not connected, no need to unsubscribe from ${n.destination} at Stomp`);
+          this._debug(`Stomp not connected, no need to unsubscribe from ${i.destination} at Stomp`);
       };
-    }).pipe(L());
+    }).pipe(V());
   }
   /**
    * **Deprecated** Please use {@link asyncReceipt}.
@@ -1168,28 +1168,28 @@ function Z() {
   return O(X);
 }
 const u = [];
-for (let i = 0; i < 256; ++i)
-  u.push((i + 256).toString(16).slice(1));
-function ee(i, e = 0) {
-  return (u[i[e + 0]] + u[i[e + 1]] + u[i[e + 2]] + u[i[e + 3]] + "-" + u[i[e + 4]] + u[i[e + 5]] + "-" + u[i[e + 6]] + u[i[e + 7]] + "-" + u[i[e + 8]] + u[i[e + 9]] + "-" + u[i[e + 10]] + u[i[e + 11]] + u[i[e + 12]] + u[i[e + 13]] + u[i[e + 14]] + u[i[e + 15]]).toLowerCase();
+for (let n = 0; n < 256; ++n)
+  u.push((n + 256).toString(16).slice(1));
+function ee(n, e = 0) {
+  return (u[n[e + 0]] + u[n[e + 1]] + u[n[e + 2]] + u[n[e + 3]] + "-" + u[n[e + 4]] + u[n[e + 5]] + "-" + u[n[e + 6]] + u[n[e + 7]] + "-" + u[n[e + 8]] + u[n[e + 9]] + "-" + u[n[e + 10]] + u[n[e + 11]] + u[n[e + 12]] + u[n[e + 13]] + u[n[e + 14]] + u[n[e + 15]]).toLowerCase();
 }
-const te = typeof crypto != "undefined" && crypto.randomUUID && crypto.randomUUID.bind(crypto), B = {
+const te = typeof crypto != "undefined" && crypto.randomUUID && crypto.randomUUID.bind(crypto), D = {
   randomUUID: te
 };
-function se(i, e, t) {
-  if (B.randomUUID && !e && !i)
-    return B.randomUUID();
-  i = i || {};
-  const s = i.random || (i.rng || Z)();
+function se(n, e, t) {
+  if (D.randomUUID && !e && !n)
+    return D.randomUUID();
+  n = n || {};
+  const s = n.random || (n.rng || Z)();
   if (s[6] = s[6] & 15 | 64, s[8] = s[8] & 63 | 128, e) {
     t = t || 0;
-    for (let n = 0; n < 16; ++n)
-      e[t + n] = s[n];
+    for (let i = 0; i < 16; ++i)
+      e[t + i] = s[i];
     return e;
   }
   return ee(s);
 }
-var ne = /* @__PURE__ */ ((i) => (i.BPMN = "/user/topic/bpmn", i.EVIDENCE = "evidence", i.USER_LOCATION = "/topic/user-location", i.COMMON_BROADCAST = "/topic/common-broadcast", i))(ne || {}), $ = /* @__PURE__ */ ((i) => (i.HEARTBEAT = "hearbeat", i))($ || {});
+var ne = /* @__PURE__ */ ((n) => (n.BPMN = "/user/topic/bpmn", n.EVIDENCE = "evidence", n.USER_LOCATION = "/topic/user-location", n.COMMON_BROADCAST = "/topic/common-broadcast", n.CONFIG = "/topic/config", n.BPMN_EVENT = "/user/topic/bpmn-event", n.DUTY_SCHEDULE_NOTIFY = "/topic/duty-schedule-notify", n))(ne || {}), $ = /* @__PURE__ */ ((n) => (n.HEARTBEAT = "hearbeat", n))($ || {});
 const N = {
   [h.CONNECTING]: "与服务器断开连接，正在连接中",
   [h.CLOSED]: "与服务器断开连接",
@@ -1203,21 +1203,21 @@ const N = {
 };
 class ie {
   constructor() {
-    m(this, "timeout", 5e3);
-    m(this, "reconnectDelay", 5e3);
-    m(this, "heartbeatTime", 15e3);
-    m(this, "baseUrl", `${location.protocol.startsWith("https") ? "wss" : "ws"}://${location.host}`);
-    m(this, "url", "/api/auth/ws/endpoint");
+    _(this, "timeout", 5e3);
+    _(this, "reconnectDelay", 5e3);
+    _(this, "heartbeatTime", 15e3);
+    _(this, "baseUrl", `${location.protocol.startsWith("https") ? "wss" : "ws"}://${location.host}`);
+    _(this, "url", "/api/auth/ws/endpoint");
   }
 }
 class oe {
   constructor() {
-    m(this, "rxStomp", new Y());
-    m(this, "config", new ie());
-    m(this, "topicHandlers", {});
-    m(this, "topicSubscrition", {});
-    m(this, "disconnect$", new S());
-    m(this, "connectionState$", new S());
+    _(this, "rxStomp", new J());
+    _(this, "config", new ie());
+    _(this, "topicHandlers", {});
+    _(this, "topicSubscrition", {});
+    _(this, "disconnect$", new C());
+    _(this, "connectionState$", new C());
   }
   init(e) {
     for (const t in e)
@@ -1233,12 +1233,12 @@ class oe {
     this.topicHandlers[e] ? this.topicHandlers[e].push(t) : (this.topicHandlers[e] = [t], this.topicSubscrition[e] = this.rxStomp.watch({
       destination: e
     }).subscribe((s) => {
-      this.topicHandlers[e].forEach((n) => n(JSON.parse(s.body)));
+      this.topicHandlers[e].forEach((i) => i(JSON.parse(s.body)));
     }));
   }
   unsubscribe(e, t) {
-    var n, o, c;
-    const s = (n = this.topicHandlers[e]) == null ? void 0 : n.findIndex((r) => r === t);
+    var i, o, c;
+    const s = (i = this.topicHandlers[e]) == null ? void 0 : i.findIndex((r) => r === t);
     s !== void 0 && s > -1 && ((o = this.topicHandlers[e]) == null || o.splice(s, 1), this.topicHandlers[e].length === 0 && ((c = this.topicSubscrition[e]) == null || c.unsubscribe(), this.topicSubscrition[e] = void 0));
   }
   unsubscribeAll() {
@@ -1254,30 +1254,30 @@ class oe {
       },
       destination: e,
       body: t
-    }), x(this.rxStomp.asyncReceipt(s)).pipe(
-      F({
+    }), R(this.rxStomp.asyncReceipt(s)).pipe(
+      x({
         first: this.config.timeout
       })
     );
   }
   stateSubscribe() {
-    const e = this.rxStomp.stompErrors$.subscribe((n) => {
+    const e = this.rxStomp.stompErrors$.subscribe((i) => {
       this.connectionState$.next({
         type: T[3],
-        message: N[3] + n.body
+        message: N[3] + i.body
       });
-    }), t = this.rxStomp.webSocketErrors$.subscribe((n) => {
+    }), t = this.rxStomp.webSocketErrors$.subscribe((i) => {
       this.connectionState$.next({
         type: T[3],
-        message: N[3] + n.type
+        message: N[3] + i.type
       });
-    }), s = this.rxStomp.connectionState$.subscribe((n) => {
+    }), s = this.rxStomp.connectionState$.subscribe((i) => {
       this.connectionState$.next({
-        type: T[n],
-        message: N[n]
-      }), n !== 1 && this.rxStomp.activate();
+        type: T[i],
+        message: N[i]
+      }), i !== 1 && this.rxStomp.activate();
     });
-    this.disconnect$.subscribe((n) => {
+    this.disconnect$.subscribe((i) => {
       e.unsubscribe(), t.unsubscribe(), s.unsubscribe();
     });
   }
@@ -1294,7 +1294,7 @@ class oe {
     });
   }
   heartbeatSubscribe() {
-    const e = R(this.config.heartbeatTime).subscribe(
+    const e = F(this.config.heartbeatTime).subscribe(
       () => this.publish($.HEARTBEAT, Date.now().toString()).subscribe({
         complete: () => {
         },
@@ -1308,24 +1308,27 @@ class oe {
     });
   }
 }
-const re = P("WsSubscribe");
-function ce(i) {
-  const e = j(i, re.MetadataKey);
+const re = M("WsSubscribe");
+function ce(n) {
+  const e = G(n, re.MetadataKey);
   if (!e || !e.length)
     return;
-  const t = G(oe);
+  const t = j(oe);
   for (const s of e) {
-    const { options: n, key: o } = s, c = (r) => i[o].call(i, r);
-    t.subscribe(n, c), M(() => {
-      t.unsubscribe(n, c);
+    const { options: i, key: o } = s, c = (r) => n[o].call(n, r);
+    t.subscribe(i, c), P(() => {
+      t.unsubscribe(i, c);
     });
   }
 }
-const le = {
+const _e = {
   key: "WsSubscribe",
   handler: ce
 };
+var ae = /* @__PURE__ */ ((n) => (n.TASK_CREATED = "task-created", n.TASK_ASSIGNED = "task-assigned", n.TASK_COMPLETED = "task-complete", n.TASK_CANCELLD = "task-cancelled", n))(ae || {}), he = /* @__PURE__ */ ((n) => (n.PROCESS_STARTED = "process-started", n.PROCESS_UPDATED = "process-updated", n.PROCESS_COMPLETED = "process-completed", n.PROCESS_CANCELLED = "process-cancelled", n.PROCESS_VARIABLE_UPDATED = "process-variable-updated", n))(he || {});
 export {
+  he as EnumBpmnProcessAction,
+  ae as EnumBpmnTaskAction,
   $ as EnumPublishDestination,
   ne as EnumTopic,
   N as InformWebsocketText,
@@ -1333,6 +1336,6 @@ export {
   oe as WebSocketService,
   ie as WebscoketConfig,
   re as WsSubscribe,
-  le as WsSubscribeHandler
+  _e as WsSubscribeHandler
 };
 //# sourceMappingURL=szjw-ws.mjs.map
