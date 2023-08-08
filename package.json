@@ -1,6 +1,6 @@
 {
 	"name": "szjw-ws",
-	"version": "1.0.2",
+	"version": "1.0.4",
 	"description": "",
 	"main": "dist/szjw-ws.js",
 	"module": "dist/szjw-ws.mjs",
