@@ -35,9 +35,9 @@ export class WebSocketService {
 
 	subscribe<T extends EnumTopic>(destination: T, handler: TopicHandler<T>) {
 		if (this.topicHandlers[destination]) {
-			this.topicHandlers[destination]!.push(handler)
+			this.topicHandlers[destination]!.add(handler)
 		} else {
-			this.topicHandlers[destination] = [handler]
+			this.topicHandlers[destination] = new Set([handler])
 			this.topicSubscrition[destination] = this.rxStomp
 				.watch({
 					destination,
@@ -49,13 +49,11 @@ export class WebSocketService {
 	}
 
 	unsubscribe<T extends EnumTopic>(destination: T, handler: TopicHandler<T>) {
-		const index = this.topicHandlers[destination]?.findIndex(v => v === handler)
-		if (index !== undefined && index > -1) {
-			this.topicHandlers[destination]?.splice(index, 1)
-			if (this.topicHandlers[destination]!.length === 0) {
-				this.topicSubscrition[destination]?.unsubscribe()
-				this.topicSubscrition[destination] = undefined
-			}
+		this.topicHandlers[destination]?.delete(handler)
+		if (this.topicHandlers[destination]?.size === 0) {
+			this.topicSubscrition[destination]?.unsubscribe()
+			this.topicSubscrition[destination] = undefined
+			this.topicHandlers[destination] = undefined
 		}
 	}
 
@@ -63,6 +61,7 @@ export class WebSocketService {
 		for (const destination in this.topicSubscrition) {
 			this.topicSubscrition[destination as EnumTopic]!.unsubscribe()
 			this.topicSubscrition[destination as EnumTopic] = undefined
+			this.topicHandlers[destination as EnumTopic] = undefined
 		}
 	}
 

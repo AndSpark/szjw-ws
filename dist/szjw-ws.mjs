@@ -17,7 +17,7 @@ var y = (n, e, t) => new Promise((s, i) => {
   }, r = (a) => a.done ? s(a.value) : Promise.resolve(a.value).then(o, c);
   r((t = t.apply(n, e)).next());
 });
-import { BehaviorSubject as H, filter as k, Subject as C, Observable as L, take as U, share as V, firstValueFrom as A, from as R, timeout as x, interval as F } from "rxjs";
+import { BehaviorSubject as H, filter as k, Subject as C, Observable as L, take as U, share as V, firstValueFrom as A, from as R, timeout as F, interval as x } from "rxjs";
 import { onUnmounted as P } from "vue";
 import { createDecorator as M, getProtoMetadata as G, injectService as j } from "vue3-oop";
 const f = {
@@ -1227,19 +1227,18 @@ class oe {
     this.configure(e), this.rxStomp.activate(), this.heartbeatSubscribe(), this.stateSubscribe();
   }
   disconnect() {
-    this.rxStomp.deactivate(), this.disconnect$.next(!0), this.disconnect$.unsubscribe(), this.unsubscribeAll();
+    this.rxStomp.deactivate(), this.disconnect$.next(!0), this.unsubscribeAll();
   }
   subscribe(e, t) {
-    this.topicHandlers[e] ? this.topicHandlers[e].push(t) : (this.topicHandlers[e] = [t], this.topicSubscrition[e] = this.rxStomp.watch({
+    this.topicHandlers[e] ? this.topicHandlers[e].add(t) : (this.topicHandlers[e] = /* @__PURE__ */ new Set([t]), this.topicSubscrition[e] = this.rxStomp.watch({
       destination: e
     }).subscribe((s) => {
       this.topicHandlers[e].forEach((i) => i(JSON.parse(s.body)));
     }));
   }
   unsubscribe(e, t) {
-    var i, o, c;
-    const s = (i = this.topicHandlers[e]) == null ? void 0 : i.findIndex((r) => r === t);
-    s !== void 0 && s > -1 && ((o = this.topicHandlers[e]) == null || o.splice(s, 1), this.topicHandlers[e].length === 0 && ((c = this.topicSubscrition[e]) == null || c.unsubscribe(), this.topicSubscrition[e] = void 0));
+    var s, i, o;
+    (s = this.topicHandlers[e]) == null || s.delete(t), ((i = this.topicHandlers[e]) == null ? void 0 : i.size) === 0 && ((o = this.topicSubscrition[e]) == null || o.unsubscribe(), this.topicSubscrition[e] = void 0);
   }
   unsubscribeAll() {
     for (const e in this.topicSubscrition)
@@ -1255,7 +1254,7 @@ class oe {
       destination: e,
       body: t
     }), R(this.rxStomp.asyncReceipt(s)).pipe(
-      x({
+      F({
         first: this.config.timeout
       })
     );
@@ -1294,7 +1293,7 @@ class oe {
     });
   }
   heartbeatSubscribe() {
-    const e = F(this.config.heartbeatTime).subscribe(
+    const e = x(this.config.heartbeatTime).subscribe(
       () => this.publish($.HEARTBEAT, Date.now().toString()).subscribe({
         complete: () => {
         },

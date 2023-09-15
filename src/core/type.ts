@@ -1,7 +1,7 @@
 import { EnumTopic } from './enum'
 
 export type TopicHandlers = {
-	[x in EnumTopic]?: ((response: TopicResponses[x]) => any)[]
+	[x in EnumTopic]?: Set<(response: TopicResponses[x]) => any>
 }
 
 export type TopicHandler<T extends EnumTopic> = (response: TopicResponse<T>) => any
